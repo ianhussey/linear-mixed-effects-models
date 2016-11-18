@@ -58,7 +58,6 @@ cleaned_df <- dplyr::inner_join(cleaned_df, inclusion_df, by = "participant")
 # IAT rts -----------------------------------------------------------------
 
 
-
 # select relevant data
 IAT_data <-  
   cleaned_df %>%
