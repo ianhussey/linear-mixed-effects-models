@@ -1,0 +1,60 @@
+Linear mixed model fit by REML ['lmerMod']
+Formula: 
+rt ~ block * condition + (1 | participant)
+   Data: IAT_data_outliers_removed
+
+REML criterion at convergence: 279687.1
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-3.0548 -0.5403 -0.1855  0.2646  9.8699 
+
+Random effects:
+ Groups      Name        Variance Std.Dev.
+ participant (Intercept) 13581    116.5   
+ Residual                47014    216.8   
+Number of obs: 20513, groups:  
+participant, 257
+
+Fixed effects:
+                                    Estimate
+(Intercept)                          587.539
+blockB1C2_block                      130.785
+conditionIAT_second                  -32.046
+blockB1C2_block:conditionIAT_second   20.269
+                                    Std. Error
+(Intercept)                             10.574
+blockB1C2_block                          4.225
+conditionIAT_second                     15.161
+blockB1C2_block:conditionIAT_second      6.058
+                                    t value
+(Intercept)                           55.57
+blockB1C2_block                       30.95
+conditionIAT_second                   -2.11
+blockB1C2_block:conditionIAT_second    3.35
+
+Correlation of Fixed Effects:
+            (Intr) blB1C2_ cnIAT_
+blckB1C2_bl -0.200               
+cndtnIAT_sc -0.697  0.139        
+bB1C2_:IAT_  0.139 -0.697  -0.200
+Linear mixed model fit by REML ['lmerMod']
+Formula: 
+rt ~ block * condition + (1 | participant)
+   Data: IAT_data_outliers_removed
+REML criterion at convergence: 279687.1
+Random effects:
+ Groups      Name        Std.Dev.
+ participant (Intercept) 116.5   
+ Residual                216.8   
+Number of obs: 20513, groups:  
+participant, 257
+Fixed Effects:
+                        (Intercept)  
+                             587.54  
+                    blockB1C2_block  
+                             130.79  
+                conditionIAT_second  
+                             -32.05  
+blockB1C2_block:conditionIAT_second  
+                              20.27  
