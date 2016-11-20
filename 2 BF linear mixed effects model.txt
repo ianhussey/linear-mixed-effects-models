@@ -2,15 +2,15 @@ FULL MODEL
 
 Bayes factor analysis
 --------------
-[1] block                                             : 4.130297e+347  ±0%
-[2] condition                                         : 1690427        ±0%
-[3] block + condition                                 : 2.946012e+354  ±1.84%
-[4] block + condition + block:condition               : 4.801149e+354  ±5.85%
-[5] participant                                       : 9.51858e+844   ±0.01%
-[6] block + participant                               : 1.001846e+1288 ±2.86%
-[7] condition + participant                           : 2.041452e+844  ±1.39%
-[8] block + condition + participant                   : 2.10481e+1287  ±1.9%
-[9] block + condition + block:condition + participant : 1.3915e+1288   ±10.01%
+[1] block                                             : 2.809612e+360  ±0%
+[2] condition                                         : 3727807        ±0%
+[3] block + condition                                 : 5.025557e+367  ±2.14%
+[4] block + condition + block:condition               : 1.148152e+368  ±2.14%
+[5] participant                                       : 3.356234e+867  ±0%
+[6] block + participant                               : 3.483911e+1331 ±0.97%
+[7] condition + participant                           : 7.260668e+866  ±1.2%
+[8] block + condition + participant                   : 7.920567e+1330 ±1.55%
+[9] block + condition + block:condition + participant : 8.215798e+1331 ±2.62%
 
 Against denominator:
   Intercept only 
@@ -23,7 +23,7 @@ INTERACTION ONLY (FULL MODEL DIVIDED BY NON-INTERACTIN MODEL)
 
 Bayes factor analysis
 --------------
-[1] block + condition + block:condition + participant : 6.611049 ±10.19%
+[1] block + condition + block:condition + participant : 10.37274 ±3.04%
 
 Against denominator:
   rt ~ block + condition + participant 

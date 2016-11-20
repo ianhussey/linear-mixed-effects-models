@@ -40,6 +40,8 @@ IAT_data_outliers_removed <-
 plot(density(IAT_data$rt), col = "red")
 lines(density(IAT_data_outliers_removed$rt), col = "blue")
 
+plot(density(IAT_data_outliers_removed$rt), col = "blue")
+
 # density plots
 #first block consistent with history - red line - B1C1_condition, B1C1_block
 plot(density(IAT_data_outliers_removed$rt[IAT_data_outliers_removed$condition == "IAT_first" & 

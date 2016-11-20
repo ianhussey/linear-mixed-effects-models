@@ -1,60 +1,32 @@
 Linear mixed model fit by REML ['lmerMod']
-Formula: 
-rt ~ block * condition + (1 | participant)
+Formula: rt ~ block * condition + (1 | participant)
    Data: IAT_data_outliers_removed
 
-REML criterion at convergence: 279687.1
+REML criterion at convergence: 277448.8
 
 Scaled residuals: 
     Min      1Q  Median      3Q     Max 
--3.0548 -0.5403 -0.1855  0.2646  9.8699 
+-3.1939 -0.5564 -0.1887  0.2783  8.8065 
 
 Random effects:
  Groups      Name        Variance Std.Dev.
- participant (Intercept) 13581    116.5   
- Residual                47014    216.8   
-Number of obs: 20513, groups:  
-participant, 257
+ participant (Intercept) 12843    113.3   
+ Residual                42886    207.1   
+Number of obs: 20486, groups:  participant, 257
 
 Fixed effects:
-                                    Estimate
-(Intercept)                          587.539
-blockB1C2_block                      130.785
-conditionIAT_second                  -32.046
-blockB1C2_block:conditionIAT_second   20.269
-                                    Std. Error
-(Intercept)                             10.574
-blockB1C2_block                          4.225
-conditionIAT_second                     15.161
-blockB1C2_block:conditionIAT_second      6.058
-                                    t value
-(Intercept)                           55.57
-blockB1C2_block                       30.95
-conditionIAT_second                   -2.11
-blockB1C2_block:conditionIAT_second    3.35
+                           Estimate Std. Error t value
+(Intercept)                 570.590      7.362   77.51
+blockB1C2_block             138.008      2.895   47.67
+condition1                   15.847      7.362    2.15
+blockB1C2_block:condition1  -10.136      2.895   -3.50
 
 Correlation of Fixed Effects:
-            (Intr) blB1C2_ cnIAT_
-blckB1C2_bl -0.200               
-cndtnIAT_sc -0.697  0.139        
-bB1C2_:IAT_  0.139 -0.697  -0.200
-Linear mixed model fit by REML ['lmerMod']
-Formula: 
-rt ~ block * condition + (1 | participant)
-   Data: IAT_data_outliers_removed
-REML criterion at convergence: 279687.1
-Random effects:
- Groups      Name        Std.Dev.
- participant (Intercept) 116.5   
- Residual                216.8   
-Number of obs: 20513, groups:  
-participant, 257
-Fixed Effects:
-                        (Intercept)  
-                             587.54  
-                    blockB1C2_block  
-                             130.79  
-                conditionIAT_second  
-                             -32.05  
-blockB1C2_block:conditionIAT_second  
-                              20.27  
+            (Intr) blB1C2_ cndtn1
+blckB1C2_bl -0.196               
+condition1  -0.027  0.005        
+blckB1C2_:1  0.005 -0.027  -0.196
+           Effect          df F.scaling           F p.value
+1           block 1, 20227.08      1.00 2272.77 ***  <.0001
+2       condition   1, 275.83      1.00      4.63 *     .03
+3 block:condition 1, 20227.08      1.00   12.26 ***   .0005
