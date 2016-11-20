@@ -15,7 +15,7 @@ library(data.table)
 # Data acquisition and cleaning -------------------------------------------
 
 ## Set the working directory
-setwd("/Users/Ian/Dropbox/Work/Projects/Alphabet soup/Hussey & Hughes - Derivation study/OSF - Transitive relations and implicit attitudes/Experiment 2/Raw Data")
+setwd("/Users/Ian/Dropbox/Work/Projects/Alphabet soup/Hussey & Hughes - Derivation study/OSF - Transitive relations and implicit attitudes/Experiment 3/Raw Data")
 
 # Read all files with the .iqdat extension
 files <- list.files(pattern = "\\.csv$")  
@@ -51,7 +51,7 @@ cleaned_df <-
                 condition = ifelse(participant%%2 == 1, 1, ifelse(participant%%2 == 0, 2, NA)))
 
 # MANUAL INCLUSIONS HERE - ONLY THOSE WITH COMPLETE DATA
-inclusion_df <- read.csv("/Users/Ian/Dropbox/Work/Projects/Alphabet soup/Hussey & Hughes - Derivation study/OSF - Transitive relations and implicit attitudes/Experiment 2/Processed data/inclusion list.csv")
+inclusion_df <- read.csv("/Users/Ian/Dropbox/Work/Projects/Alphabet soup/Hussey & Hughes - Derivation study/OSF - Transitive relations and implicit attitudes/Experiment 3/Processed data/inclusion list.csv")
 
 cleaned_df <- dplyr::inner_join(cleaned_df, inclusion_df, by = "participant")
 
@@ -71,8 +71,7 @@ IAT_data <-
                 accuracy)
 
 
-
 # Write to disk -----------------------------------------------------------
 
-write.csv(IAT_data, file = "/Users/Ian/git/mixed-effects-models/long data.csv", row.names = FALSE)
+write.csv(IAT_data, file = "/Users/Ian/git/linear mixed effects models/long data.csv", row.names = FALSE)
 
