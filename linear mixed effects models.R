@@ -12,6 +12,7 @@ library(schoRsch)
 library(afex)  # stacks on top of lmer for p values, eta2 etc
 library(BayesFactor)
 library(simr) # for power calculations via powerSim  
+library(pim)
 
 
 # data acquisition --------------------------------------------------------
@@ -121,7 +122,7 @@ sink()
 # https://cran.r-project.org/web/packages/simr/vignettes/examples.html
 
 
-# model 3 ------------------------------------------------------------------
+# model 2 ------------------------------------------------------------------
 
 
 # Bayes factors mixed linear effects model with participant as a random effect
@@ -149,4 +150,25 @@ model_2
 cat("\n\nINTERACTION ONLY (FULL MODEL DIVIDED BY NON-INTERACTIN MODEL) \n\n")
 model_2[9] / model_2[8]
 sink()
+
+
+# model 3 -----------------------------------------------------------------
+
+
+# semi parametric effects model
+model_3 <- pim(rt ~ block * condition,
+               data = IAT_data)
+
+save(model_3, file = "model_3_pim.RData")
+#load(model_3, file = "model_3_pim.RData")
+
+
+summary(model_3)
+
+# p value to exact decimal places
+summary(pr(model_3)
+
+#effect size
+plogis(coef(model_3))
+
 
