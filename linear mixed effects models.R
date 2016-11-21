@@ -21,43 +21,57 @@ setwd("/Users/Ian/git/linear mixed effects models/")
 
 IAT_data <- 
   read.csv("long data.csv") %>%
+  filter(rt > 0) %>%  # log transformations require rts of 0 to be removed.
   mutate(block = ifelse(block == 1, "B1C1_block", "B1C2_block"),
          condition = as.factor(ifelse(condition == 1, "IAT_first", "IAT_second")),
-         participant = as.factor(participant))
+         participant = as.factor(participant),
+         log_rt = log(rt))
 
+# data transformations are done before trimming
 IAT_data_outliers_removed <- 
   IAT_data %>%
   schoRsch::outlier(dv = "rt", 
                     todo="elim", 
                     upper.z = 2.5, 
-                    lower.z = -2.5)
+                    lower.z = -2.5) %>%
+  schoRsch::outlier(dv = "log_rt", 
+                    todo="elim", 
+                    upper.z = 2.5, 
+                    lower.z = -2.5) 
 
 
 # plots -------------------------------------------------------------------
 
 
-# raw vs trimmed 
+# raw 
 plot(density(IAT_data$rt), col = "red")
 lines(density(IAT_data_outliers_removed$rt), col = "blue")
-
+# rescaled
 plot(density(IAT_data_outliers_removed$rt), col = "blue")
 
-# density plots
-#first block consistent with history - red line - B1C1_condition, B1C1_block
-plot(density(IAT_data_outliers_removed$rt[IAT_data_outliers_removed$condition == "IAT_first" & 
+# log transformed
+plot(density(IAT_data$log_rt), col = "red")
+lines(density(IAT_data_outliers_removed$log_rt), col = "blue")
+# rescaled
+plot(density(IAT_data_outliers_removed$log_rt), col = "blue")
+
+
+# by cell
+# shorter history, history consistent IAT block - red line
+plot(density(IAT_data_outliers_removed$log_rt[IAT_data_outliers_removed$condition == "IAT_first" & 
                                             IAT_data_outliers_removed$block == "B1C1_block" ]), col = "red")
 
-#first block inconsistent with history - green line - B1C1_condition, B1C2_block
-lines(density(IAT_data_outliers_removed$rt[IAT_data_outliers_removed$condition == "IAT_first" & 
+# shorter history, history inconsistent IAT block - green line
+lines(density(IAT_data_outliers_removed$log_rt[IAT_data_outliers_removed$condition == "IAT_first" & 
                                              IAT_data_outliers_removed$block == "B1C2_block"]), col = "green")
-#first block inconcistent with history - blue line - B1C2_condition, B1C1_block
-lines(density(IAT_data_outliers_removed$rt[IAT_data_outliers_removed$condition == "IAT_second" & 
+# longer history, history consistent IAT block - blue line
+lines(density(IAT_data_outliers_removed$log_rt[IAT_data_outliers_removed$condition == "IAT_second" & 
                                              IAT_data_outliers_removed$block == "B1C1_block"]), col = "blue")
-#first block consistent with history - magenta line - B1C2_condition, B1C2_block
-lines(density(IAT_data_outliers_removed$rt[IAT_data_outliers_removed$condition == "IAT_second" & 
+# longer history, history inconsistent IAT block - magenta line
+lines(density(IAT_data_outliers_removed$log_rt[IAT_data_outliers_removed$condition == "IAT_second" & 
                                              IAT_data_outliers_removed$block == "B1C2_block"]), col = "magenta")
 # interactions
-with(IAT_data_outliers_removed, interaction.plot(block, condition, rt))
+with(IAT_data_outliers_removed, interaction.plot(block, condition, log_rt))
 
 
 # model 1 ------------------------------------------------------------------
@@ -66,7 +80,15 @@ with(IAT_data_outliers_removed, interaction.plot(block, condition, rt))
 # frequentist mixed linear effects model with participant as a random effect
 # implemented using afex on top of lmer, to produce *p values*
 
-model_1 <- afex::mixed(rt ~ block * condition + (1 | participant), # entering participant as a random effect acknowledges the non-independence of the multiple data points for each participant
+# NB production of p values (over LRs etc) is contentious, but cite the
+# following as recent evidence for the use of kenward roger method estiamtion: 
+# http://link.springer.com/article/10.3758%2Fs13428-016-0809-y
+
+# No effect sizes are produced due to contention over how to use the random
+# factor error. See 
+# http://stats.stackexchange.com/questions/95054/how-to-get-an-overall-p-value-and-effect-size-for-a-categorical-factor-in-a-mi
+
+model_1 <- afex::mixed(log_rt ~ block * condition + (1 | participant), # entering participant as a random effect acknowledges the non-independence of the multiple data points for each participant
                        data = IAT_data_outliers_removed, 
                        type = 3,  # sum of squares
                        method = "KR",  # Kenward-Roger method of approximation of df for p values. Parametic bootstrapping ("PB") and liklihood ratio tests ("LR") also available.
@@ -78,7 +100,7 @@ print(model_1)  # same as using anova() here
 
 
 # write to disk
-sink("1 frequentist linear mixed effects model.txt")
+sink("1 frequentist linear mixed effects model - log transformation.txt")
 summary(model_1)
 print(model_1)  # same as using anova() here
 sink()
@@ -89,7 +111,7 @@ sink()
 
 
 # post_hoc_power <- powerSim(model_1, 
-#                            test = (rt ~ block + condition + (1 | participant)),
+#                            test = (log_rt ~ block + condition + (1 | participant)),
 #                            seed = 20560,  # generated via www.random.org
 #                            nsim = 100)
 # post_hoc_power
@@ -104,7 +126,7 @@ sink()
 
 # Bayes factors mixed linear effects model with participant as a random effect
 
-model_2 <- generalTestBF(rt ~ block * condition + participant, 
+model_2 <- generalTestBF(log_rt ~ block * condition + participant, 
                          whichRandom = "participant",  # random factors
                          data = IAT_data_outliers_removed,
                          rscaleFixed = "medium",  # default 
@@ -121,12 +143,10 @@ model_2[9] / model_2[8]
 
 
 # write to disk
-sink("2 BF linear mixed effects model.txt")
+sink("2 BF linear mixed effects model - log transformation.txt")
 cat("FULL MODEL \n\n")
 model_2
 cat("\n\nINTERACTION ONLY (FULL MODEL DIVIDED BY NON-INTERACTIN MODEL) \n\n")
 model_2[9] / model_2[8]
 sink()
-
- 
 

@@ -1,0 +1,32 @@
+FULL MODEL 
+
+Bayes factor analysis
+--------------
+[1] block                                             : 1.33984e+523   ±0%
+[2] condition                                         : 9671535        ±0%
+[3] block + condition                                 : 2.377361e+531  ±0.93%
+[4] block + condition + block:condition               : 1.331862e+534  ±3.8%
+[5] participant                                       : 1.135866e+943  ±0.07%
+[6] block + participant                               : 1.923097e+1645 ±0.89%
+[7] condition + participant                           : 3.538235e+942  ±1.07%
+[8] block + condition + participant                   : 7.937115e+1644 ±10.95%
+[9] block + condition + block:condition + participant : 2.683042e+1649 ±7.08%
+
+Against denominator:
+  Intercept only 
+---
+Bayes factor type: BFlinearModel, JZS
+
+
+
+INTERACTION ONLY (FULL MODEL DIVIDED BY NON-INTERACTIN MODEL) 
+
+Bayes factor analysis
+--------------
+[1] block + condition + block:condition + participant : 33803.74 ±13.04%
+
+Against denominator:
+  log_rt ~ block + condition + participant 
+---
+Bayes factor type: BFlinearModel, JZS
+

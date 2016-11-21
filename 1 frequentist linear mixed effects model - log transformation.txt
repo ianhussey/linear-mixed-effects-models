@@ -1,0 +1,32 @@
+Linear mixed model fit by REML ['lmerMod']
+Formula: log_rt ~ block * condition + (1 | participant)
+   Data: IAT_data_outliers_removed
+
+REML criterion at convergence: 1096.8
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-3.7048 -0.6503 -0.1131  0.5102  5.0400 
+
+Random effects:
+ Groups      Name        Variance Std.Dev.
+ participant (Intercept) 0.02220  0.1490  
+ Residual                0.05911  0.2431  
+Number of obs: 20130, groups:  participant, 257
+
+Fixed effects:
+                            Estimate Std. Error t value
+(Intercept)                 6.295826   0.009614   654.9
+blockB1C2_block             0.204252   0.003430    59.6
+condition1                  0.025297   0.009614     2.6
+blockB1C2_block:condition1 -0.018387   0.003430    -5.4
+
+Correlation of Fixed Effects:
+            (Intr) blB1C2_ cndtn1
+blckB1C2_bl -0.178               
+condition1  -0.029  0.006        
+blckB1C2_:1  0.006 -0.033  -0.178
+           Effect          df F.scaling           F p.value
+1           block 1, 19872.47      1.00 3546.26 ***  <.0001
+2       condition   1, 271.78      1.00     6.92 **    .009
+3 block:condition 1, 19872.47      1.00   28.74 ***  <.0001
