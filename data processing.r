@@ -6,10 +6,6 @@
 #         please cite:  Hussey, I., & Hughes, S. (2016). Transitive relations and implicit attitudes. Dataset. osf.io/5nxby 
 
 
-# Clean the workspace
-rm(list=ls())
-
-
 # Dependencies ------------------------------------------------------------
 
 
@@ -95,5 +91,5 @@ IAT_data <-
 # Write to disk -----------------------------------------------------------
 
 
-IAT_data %>% write.csv(file = "/Users/Ian/git/linear mixed effects models/example data.csv", row.names = FALSE)
+IAT_data %>% write.csv(file = "/Users/Ian/git/linear mixed effects models/sample data.csv", row.names = FALSE)
 
