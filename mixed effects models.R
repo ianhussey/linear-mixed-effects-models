@@ -10,7 +10,7 @@
 
 
 library(ez)
-library(dplyr)
+library(tidyverse)
 library(car)
 library(schoRsch)
 library(afex)  # stacks on top of lmer for p values, eta2 etc
@@ -112,6 +112,40 @@ sink("1 frequentist linear mixed effects model.txt")
 summary(model_1)
 print(model_1)  # same as using anova() here
 sink()
+
+
+
+# intercepts of individual participants -----------------------------------
+
+
+# These could be used as a variable in a subsequent analysis. 
+
+# via lme4::ranef, but this requires a lmer object. So we redo the model in this without afex (which usually makes lmer more accessible) 
+model_1b <- lmer(rt ~ block * condition + (1 | participant), # entering participant as a random effect acknowledges the non-independence of the multiple data points for each participant
+                 data = IAT_data_outliers_removed,
+                 contrasts = list(block="contr.sum", condition = "contr.sum"))  # effect coding rather than dummy coding
+
+# take the list produced by ranef and mung it into a data frame, order by intercept, and add a rank column
+random_effect_intercepts <- ranef(model_1b)
+random_effect_intercepts <- as.data.frame(random_effect_intercepts$participant)
+random_effect_intercepts <- 
+  random_effect_intercepts %>%
+  tibble::rownames_to_column(var = "participant") %>%
+  rename(intercept = `(Intercept)`) %>%
+  arrange(intercept) %>%
+  tibble::rownames_to_column(var = "rank")
+
+# plot distriubtion of intercepts
+plot(density(random_effect_intercepts$intercept), 
+     col = "red",
+     main="Distribution of intercepts between participants", 
+     xlab="Intercept", ylab="Density")
+
+# or by scatterplot
+plot(random_effect_intercepts$rank, 
+     random_effect_intercepts$intercept, 
+     main="Intercepts between participants", 
+     xlab="Rank", ylab="Intercept", pch=19)
 
 
 # power analysis for mixed linear effects models ---------------------------
