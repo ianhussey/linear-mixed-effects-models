@@ -1,4 +1,4 @@
-# title: mixed effects models - linear frequentist, linear bayes factors, and semi-parametric Probabalistic Index
+# title: mixed effects models - linear frequentist, linear bayes factors and semi-parametric models
 # author: Ian Hussey (ian.hussey@ugent.be)
 # license: 
 #   code: GPLv3+        https://www.gnu.org/licenses/quick-guide-gplv3.en.html
@@ -30,20 +30,18 @@ IAT_data <-
   mutate(block = ifelse(block == 1, "B1C1_block", "B1C2_block"),
          condition = as.factor(ifelse(condition == 1, "IAT_first", "IAT_second")),
          participant = as.factor(participant),
-         block = as.factor(block),
-         rt = log(rt))
+         block = as.factor(block))
 
-# data transformations are done before trimming
+# check that what should be factors are
+sapply(IAT_data, class)
+
+# data trimming
 IAT_data_outliers_removed <- 
   IAT_data %>%
   schoRsch::outlier(dv = "rt", 
                     todo="elim", 
                     upper.z = 2.5, 
-                    lower.z = -2.5) %>%
-  schoRsch::outlier(dv = "rt", 
-                    todo="elim", 
-                    upper.z = 2.5, 
-                    lower.z = -2.5) 
+                    lower.z = -2.5)
 
 
 # plots -------------------------------------------------------------------
