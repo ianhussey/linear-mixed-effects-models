@@ -1,0 +1,154 @@
+---
+title: "Implementation of a linear mixed effect model for IAT data"
+author: "Ian Hussey"
+output:
+  html_document:
+    code_folding: hide
+    highlight: haddock
+    theme: flatly
+    toc: yes
+    toc_float: yes
+---
+
+Sample data is taken from an IAT experiment with two independent groups.
+
+```{r message=FALSE, warning=FALSE}
+# dependencies
+library(tidyverse)
+library(lme4)
+library(sjPlot)
+library(effects)
+library(afex)
+library(timesavers) # install_github("ianhussey/timesavers")
+library(knitr)
+require(kableExtra)
+
+# get data
+data_df <- read.csv("sample data.csv")
+```
+
+# Trim outliers
+
+RTs greater than 2.5 SD from mean are excluded as outliers. This is a fairly standard convention, although there are more robust strategies. 
+
+```{r, message=FALSE, warning=FALSE}
+data_outliers_removed <- data_df %>%
+  
+  # rename for plotting
+  rename(Condition = condition,
+         Block = block) %>%
+  
+  # set vars to factor data type
+  mutate(Condition = as.factor(Condition),
+         Block = as.factor(Block)) %>%
+  
+  # exclude outliers
+  schoRsch::outlier(dv = "rt", 
+                    todo = "na", 
+                    upper.z = 2.5, 
+                    lower.z = -2.5)
+```
+
+## Check that necessary variables are factors
+
+```{r, message=FALSE, warning=FALSE}
+options(knitr.table.format = "html")  # comment out if knitting to pdf
+
+sapply(data_outliers_removed, class) %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = FALSE)
+```
+
+## Distributions 
+
+### Raw data
+
+```{r, fig.height=3, fig.width=5, message=FALSE, warning=FALSE}
+ggplot(data = data_df) + 
+  geom_density(aes(x = rt), alpha=0.50, fill = "lightblue") +
+  theme_minimal()
+```
+
+### Data after outliers removed
+
+```{r, fig.height=3, fig.width=5, message=FALSE, warning=FALSE}
+ggplot(data = data_outliers_removed) + 
+  geom_density(aes(x = rt), alpha=0.50, fill = "lightblue") +
+  theme_minimal()
+```
+
+# Linear mixed model
+
+## Specify model
+
+NB if continuous IVs were being employed they would of course have to first be centered in order to make the intercepts interpretable. A center() function is available in the timesavers package.
+
+Models should generally be maximally specified (Barr, Levy, Sheepers & Tiluy, 2013), so I have included random slopes for Block as well as the random intercept for participants. 
+
+The latter acknowledges the non independence of the multiple RTs produced by each participants, and that mean responding speed differs between participant. The former acknowledges that the magnitude of the IAT effect differs between participants. 
+
+```{r, message=FALSE, warning=FALSE}
+model_1 <- lmer(rt ~ Condition * Block + (Block | participant),  
+                contrasts = list(Condition = "contr.sum", Block = "contr.sum"),  
+                data = data_outliers_removed)
+```
+
+## Results table
+
+P values can be computed if degrees of freedom are estimated. The below does this  via Wald estimation, which isn't ideal as it assumes normality. Bootstrapping or approximation via Kenward-Rogers method are superior (Luke, 2016). KR is possible using the below implementation. Both computationally intensive so Wald employed below, but KR would be preferable for publication. 
+
+NB effect sizes are generally not produced for mixed effects models as there is contention over how to treat the variance associated with the random effect. Standardized betas can be informative here in lieu of effect sizes, so both are included in the table. 
+
+```{r, message=FALSE, warning=FALSE}
+sjt.lmer(model_1, 
+         emph.p = FALSE, 
+         p.kr = FALSE,  # kenward rogers estimation method
+         show.std = TRUE,
+         show.aic = TRUE,
+         digits.est = 2,
+         digits.ci = 2)
+```
+
+NB afex(), a wrapper for lmer(), can be used over lmer() if anova style output (F values) is preferable, but plotting is more difficult. KR implementation within afex is also more efficient. 
+
+```{r, message=FALSE, warning=FALSE}
+# afex alternative method
+
+# model_1 <- afex::mixed(rt ~ Block * condition + (1 | participant),
+#                        contrasts = TRUE,  # set to true by default, but worth emphasising here that we're using effect coding not dummy coding.
+#                        data = IAT_data_outliers_removed,
+#                        type = 3,  # sum of squares type
+#                        method = "KR",
+#                        progress = TRUE, 
+#                        return = "mixed")
+# 
+# summary(model_1)
+# print(model_1)
+```
+
+## Plot effects 
+
+```{r, message=FALSE, warning=FALSE, fig.height=5, fig.width=5}
+sjp.lmer(model_1, 
+         type = "fe",
+         p.kr = FALSE) 
+```
+
+## Plot marginal means for the interaction effect
+
+```{r, message=FALSE, warning=FALSE, fig.height=4, fig.width=4}
+model_1_predicted_effects <- as.data.frame(effect("Condition*Block", model_1))
+
+ggplot(data = model_1_predicted_effects,
+       aes(x = Block, y = fit, colour = Condition)) +
+  geom_pointrange(aes(ymax = upper,
+                      ymin = lower),
+                  position = position_dodge(width = .1)) +
+  geom_line(aes(group = Condition),
+            position = position_dodge(width = .1)) +
+  ylab("RT") +
+  xlab("Block") +
+  scale_colour_grey() +
+  theme_classic() +
+  theme(legend.justification=c(1,1), legend.position=c(1,1))
+```
